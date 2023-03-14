@@ -56,43 +56,41 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                description: ''
-                properties:
-                  code:
-                    type: string
-                    example: 401
-                  message:
-                    type: string
-                    example: Invalid Authorization key for resource
-        '400':
-          description: Bad data
-          content:
-            application/json:
-              schema:
-                type: object
-                description: ''
-                properties:
-                  code:
-                    type: string
-                    example: 400
-                  message:
-                    type: string
-                    example: LOGICALID missing or value is not COMPONENTDISPOSITION
+                $ref: '#/components/schemas/ErrorInvalidAuthorizationKey'
         '404':
           description: Resource Not Found
           content:
             application/json:
               schema:
-                type: object
-                description: ''
-                properties:
-                  code:
-                    type: string
-                    example: 404
-                  message:
-                    type: string
-                    example: Resource Not Found
+                $ref: '#/components/schemas/ErrorNotFoundInvalidObjectKey'
+  /componentdetails:
+    post:
+      summary: Component Details
+      description: Send Component Details
+      tags: 
+        - Component
+      requestBody:
+        description: Component Details Request Body
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ComponentDetailsRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorInvalidAuthorizationKey'
+        '404':
+          description: Resource Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNotFound'
 security:
   - ApiKeyAuth: []
 components:
@@ -104,7 +102,7 @@ components:
   schemas:
     ComponentDispositionRequest:
      type: object
-     description: Component Details Request Body
+     description: Component Disposition Request Body
      properties:
         sender:
           type: object
@@ -172,3 +170,75 @@ components:
                 locationZipCd:
                   type: string
                   example: 87456
+    ComponentDetailsRequest:
+      type: object
+      description: Component Details Request Body
+      properties:
+        dataArea:
+          type: array
+          items:
+            type: object
+            properties:
+              componentId:
+                type: string
+                example: "10608533"
+              validationComponentTyp:
+                type: string
+                example: "SP"
+              componentDesc:
+                type: string
+                example: "1st Row LH PWR Cloth, TG7 A3 Frame w/ T90A Trim"
+              testEngineerNme:
+                type: string
+                example: "Last Name, First Name"
+              programName:
+                type: string
+                example: "2022 Honda T90A Seat"
+              dvpNbr:
+                type: string
+                example: "131825"
+              lastModified:
+                type: string
+                example: "10/22/2021 02:58:21 pm"
+              isActive: 
+                type: string
+                example: "1"
+    ErrorInvalidAuthorizationKey:
+      type: object
+      description: Error Message for Invalid Authorization Key
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              example: "401"
+            message:
+              type: string
+              example: "Invalid Authorization key for resource"
+    ErrorNotFoundInvalidObjectKey:
+      type: object
+      description: Error Message for Resource not found
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              example: "404"
+            message:
+              type: string
+              example: "Resource Not Found or LogicalId is either missing or Invalid. Valid values for LogicalId is COMPONENTDISPOSITION"
+    ErrorNotFound:
+      type: object
+      description: Error Message for Resource not found
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              example: "404"
+            message:
+              type: string
+              example: "Resource Not Found"
